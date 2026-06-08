@@ -1,6 +1,6 @@
-# system_controller
+# LAGER
 
-A Python-based controller for UAV payload systems, designed to manage and coordinate a drone (DJI M600) and a gimbal (Gremsy T7) for autonomous Point-of-Interest (POI) tracking. The system reads a YAML configuration file, establishes serial connections to the hardware, logs telemetry data, and continuously points the gimbal at a fixed geographic target while the UAV moves.
+Live Attitude and Gimbal Error Resolver: a Python-based controller for UAV payload systems, designed to manage and coordinate a drone (DJI M600) and a gimbal (Gremsy T7) for autonomous Point-of-Interest (POI) tracking. The system reads a YAML configuration file, establishes serial connections to the hardware, logs telemetry data, and continuously points the gimbal at a fixed geographic target while the UAV moves.
 
 ---
 
@@ -34,7 +34,7 @@ The controller runs on a companion computer onboard the UAV (tested on Raspberry
 ## Repository Structure
 
 ```
-system_controller/
+lager/
 ├── cli.py                  # Rich-based live terminal display
 ├── Controller.py           # Main orchestration class
 ├── DataLoader.py           # Generic data loading utilities
@@ -95,8 +95,8 @@ Key dependencies:
 ## Installation
 
 ```bash
-git clone https://github.com/federico-cacciotti/system_controller.git
-cd system_controller
+git clone https://github.com/federico-cacciotti/lager.git
+cd lager
 pip install -r requirements.txt
 ```
 
