@@ -95,7 +95,7 @@ Key dependencies:
 ## Installation
 
 ```bash
-git clone https://github.com/federico-cacciotti/lager.git
+git clone https://github.com/POLOCALC/lager.git
 cd lager
 pip install -r requirements.txt
 ```
