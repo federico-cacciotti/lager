@@ -30,8 +30,8 @@ Gimbal:
     frequency: 50  # Hz
 
 POI:
-  name: Fake POI
-  latitude: 37.7749
-  longitude: -122.4194
-  altitude: 30.0
+  name: POI
+  latitude: 45.513511
+  longitude: 9.211680
+  altitude: 124
   max_distance: 700.0  # meters

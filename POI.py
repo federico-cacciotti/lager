@@ -56,7 +56,7 @@ class POI():
                 az, el, rng = pm.geodetic2aer(self.latitude, self.longitude, self.altitude,
                                               uav_lat, uav_lon, uav_alt,
                                               deg=True)
-                gimbal_pitch = -el
+                gimbal_pitch = el
 
                 # set the gimbal orientation to point at the POI
                 gimbal.goto(yaw=gimbal_yaw, pitch=gimbal_pitch, roll=gimbal_roll, wait=False)

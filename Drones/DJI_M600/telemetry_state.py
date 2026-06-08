@@ -20,7 +20,7 @@ class TelemetryState():
                     'roll': self.state.get('roll'),
                     'latitude': self.state.get('rtk_lat_deg'),
                     'longitude': self.state.get('rtk_lon_deg'),
-                    'altitude': self.state.get('alt_m'),
+                    'altitude': self.state.get('rtk_hfsl_m'),
                     'heading': self.state.get('rtk_yaw_deg')
             }
             return dict
