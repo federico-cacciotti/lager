@@ -10,6 +10,7 @@ from Gimbals import Gremsy_T7
 import cli
 import POI
 import parameters as params
+from GPIO import LED
 
 # logging configuration with millisecond precision
 LOGGING_LEVEL = logging.INFO
@@ -17,6 +18,13 @@ LOGGING_LEVEL = logging.INFO
 class Controller:
     def __init__(self, config_file):
         self.config = None
+
+        # initialise status LED early so it can signal progress
+        if params.ENABLE_LED_INDICATOR:
+            self.led = LED(pin=params.LED_INDICATOR_PIN)
+            self.led.set(params.LED_STATE_ON)   # solid on = initialising
+        else:
+            self.led = None
 
         # create timestamp
         timestamp = time.strftime("%Y%m%d_%H%M%S")
@@ -227,6 +235,9 @@ class Controller:
         else:
             logging.warning("No gimbal configured, cannot connect.")
 
+        if self.led is not None:
+            self.led.set(params.LED_STATE_ON)   # solid on = connected, ready
+
     
     def disconnect(self):
         if self.drone is not None:
@@ -240,6 +251,10 @@ class Controller:
             self.gimbal.disconnect()
         else:
             logging.warning("No gimbal configured, cannot disconnect.")
+
+        if self.led is not None:
+            self.led.set(params.LED_STATE_OFF)  # off = disconnected
+            self.led.cleanup()
 
         logging.info("Disconnected.")
 
@@ -256,6 +271,9 @@ class Controller:
             self.gimbal.start_telemetry()
         else:
             logging.warning("No gimbal configured, cannot start telemetry.")
+
+        if self.led is not None:
+            self.led.set(params.LED_STATE_BLINK)  # blinking = telemetry acquiring
         
     
     def stop_telemetry(self):
@@ -270,6 +288,9 @@ class Controller:
             self.gimbal.stop_telemetry()
         else:
             logging.warning("No gimbal configured, cannot stop telemetry.")
+
+        if self.led is not None:
+            self.led.set(params.LED_STATE_ON)   # solid on = connected, telemetry stopped
 
         logging.info("Telemetry logging stopped. Data saved to: " + self.data_folder)
 

@@ -72,6 +72,7 @@ lager/
 | Drone | DJI M600 | Serial (DJI OSDK), `/dev/serial0` |
 | Gimbal | Gremsy T7 | Serial (MAVLink), `/dev/ttyAMA4` |
 | Companion computer | Raspberry Pi (or equivalent) | — |
+| Status LED | — | GPIO pin 17 (BCM) |
 
 ---
 
@@ -231,6 +232,17 @@ Builds and refreshes a `rich` `Live` layout with three panes:
 - **Drone panel** — real-time drone telemetry.
 - **Gimbal panel** — real-time gimbal telemetry.
 - **Footer** — last N lines of the log file, colour-coded by log level.
+
+### `GPIO`
+Controls a status LED on a Raspberry Pi GPIO pin (BCM pin 17 by default). The LED reflects the controller lifecycle:
+
+| LED state | Meaning |
+|-----------|----------|
+| Off | Controller not running / disconnected |
+| Solid on | Initialising or connected, telemetry idle |
+| Blinking | Telemetry acquisition in progress |
+
+The `LED` class wraps `RPi.GPIO` and handles the blink loop in a daemon thread. If `RPi.GPIO` is not available (e.g. on a development machine) it fails silently and the rest of the code is unaffected. The LED pin and enable flag are configured via `parameters.py` (`LED_INDICATOR_PIN`, `ENABLE_LED_INDICATOR`).
 
 ---
 

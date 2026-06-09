@@ -7,3 +7,10 @@ LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d %(levelname)s] (%(name)s): %(message)
 LOGGING_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
 DECODED_DATA_FILENAME = 'decoded_telemetry_data.pkl'
+
+# GPIO settings for LED indicator
+ENABLE_LED_INDICATOR = True
+LED_INDICATOR_PIN = 17
+LED_STATE_OFF = 0
+LED_STATE_ON = 1
+LED_STATE_BLINK = 2
