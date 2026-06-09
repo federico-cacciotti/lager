@@ -38,6 +38,9 @@ lager/
 ├── cli.py                  # Rich-based live terminal display
 ├── Controller.py           # Main orchestration class
 ├── DataLoader.py           # Generic data loading utilities
+├── decode_telemetry.py     # Offline telemetry decoding and plotting
+├── follow_POI.py           # End-to-end POI tracking entry point
+├── parameters.py           # Global parameters and paths
 ├── POI.py                  # POI class and gimbal tracking logic
 ├── requirements.txt        # Python dependencies
 ├── config/
@@ -45,17 +48,19 @@ lager/
 │   ├── move_gimbal_config.yaml         # Config for gimbal movement tests
 │   ├── show_telemetry_config.yaml      # Config for live telemetry display
 │   └── show_telemetry_sim_config.yaml  # Config for simulated telemetry display
+├── data/
+│   └── current             # Symlink to the most recent telemetry run folder
 ├── Drones/
 │   └── DJI_M600/           # DJI M600 driver (connection, telemetry, utils)
 ├── Gimbals/
 │   └── Gremsy_T7/          # Gremsy T7 driver (MAVLink, telemetry, goto)
 └── tests/
-    ├── follow_POI.py        # End-to-end POI tracking test
+    ├── data/
+    │   └── gimbal_motion/   # Logged data from gimbal movement tests
     ├── move_gimbal.py       # Gimbal movement test
+    ├── plot_telemetry.py    # Telemetry plotting utilities
     ├── show_telemetry.py    # Live telemetry display test
-    ├── show_telemetry_sim.py# Simulated telemetry display test
-    ├── decode_telemetry.py  # Offline telemetry decoding and plotting
-    └── plot_telemetry.py    # Telemetry plotting utilities
+    └── show_telemetry_sim.py# Simulated telemetry display test
 ```
 
 ---
@@ -152,13 +157,20 @@ Set `simulator: True` for either device to run without physical hardware (synthe
 
 ## Usage
 
-Run a test script from the `tests/` directory:
+Run the main scripts from the project root:
+
+```bash
+# POI tracking (requires drone + gimbal connected)
+python3 follow_POI.py
+
+# Decode and inspect previously logged telemetry files
+python3 decode_telemetry.py
+```
+
+Run test scripts from the `tests/` directory:
 
 ```bash
 cd tests/
-
-# POI tracking (requires drone + gimbal connected)
-python3 follow_POI.py
 
 # Live telemetry display only
 python3 show_telemetry.py
@@ -169,13 +181,13 @@ python3 show_telemetry_sim.py
 # Move gimbal to specific angles
 python3 move_gimbal.py
 
-# Decode and inspect previously logged telemetry files
-python3 decode_telemetry.py
+# Plot logged telemetry data
+python3 plot_telemetry.py
 ```
 
-Press **Ctrl+C** to stop any running test gracefully; telemetry logging will be stopped and devices disconnected cleanly.
+Press **Ctrl+C** to stop any running script gracefully; telemetry logging will be stopped and devices disconnected cleanly.
 
-Each run creates a timestamped folder under `tests/data/` containing the log file and a copy of the configuration used.
+Each run creates a timestamped folder under `data/` containing the log file and a copy of the configuration used. A `data/current` symlink is automatically updated to point to the latest run folder.
 
 ---
 
@@ -224,14 +236,14 @@ Builds and refreshes a `rich` `Live` layout with three panes:
 
 ## Tests
 
-| Script | Description |
-|--------|-------------|
-| `follow_POI.py` | Full end-to-end POI tracking run |
-| `show_telemetry.py` | Live display with real hardware |
-| `show_telemetry_sim.py` | Live display with simulated data |
-| `move_gimbal.py` | Command the gimbal to a sequence of angles |
-| `decode_telemetry.py` | Load and print a saved telemetry binary file |
-| `plot_telemetry.py` | Plot logged telemetry data with matplotlib |
+| Script | Location | Description |
+|--------|----------|-------------|
+| `follow_POI.py` | root | Full end-to-end POI tracking run |
+| `decode_telemetry.py` | root | Load and print a saved telemetry binary file |
+| `show_telemetry.py` | `tests/` | Live display with real hardware |
+| `show_telemetry_sim.py` | `tests/` | Live display with simulated data |
+| `move_gimbal.py` | `tests/` | Command the gimbal to a sequence of angles |
+| `plot_telemetry.py` | `tests/` | Plot logged telemetry data with matplotlib |
 
 ---
 
