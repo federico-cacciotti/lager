@@ -9,13 +9,10 @@ from Drones import DJI_M600
 from Gimbals import Gremsy_T7
 import cli
 import POI
-
-DATA_PATH = 'data'
+import parameters as params
 
 # logging configuration with millisecond precision
 LOGGING_LEVEL = logging.INFO
-LOGGING_FORMAT = '[%(asctime)s.%(msecs)03d %(levelname)s] (%(name)s): %(message)s'
-LOGGING_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
 class Controller:
     def __init__(self, config_file):
@@ -25,18 +22,27 @@ class Controller:
         timestamp = time.strftime("%Y%m%d_%H%M%S")
 
         # create data folder
-        self.data_folder = f"flight_controller_{timestamp}"
-        self.data_folder = os.path.join(DATA_PATH, self.data_folder)
+        self.data_folder = f"{params.DATA_FOLDER_PREFIX}_{timestamp}"
+        self.data_folder = os.path.join(params.DATA_PATH, self.data_folder)
         # check data path
         if not os.path.exists(self.data_folder):
             os.makedirs(self.data_folder)
 
-        # create logging file with timestamp
+        # create logging file
         timestamp = time.strftime("%Y%m%d_%H%M%S")
-        logging_file = os.path.join(self.data_folder, f"controller_{timestamp}.log")
-        logging.basicConfig(level=LOGGING_LEVEL, format=LOGGING_FORMAT, datefmt=LOGGING_DATEFMT, handlers=[
+        logging_file = os.path.join(self.data_folder, params.LOGGING_FILE_NAME)
+        logging.basicConfig(level=LOGGING_LEVEL, format=params.LOGGING_FORMAT, datefmt=params.LOGGING_DATEFMT, handlers=[
             logging.FileHandler(logging_file)
         ])
+        logging.info(f"Controller initialized at {timestamp}")
+
+        # create/update "current" symlink pointing to the new data folder
+        current_link = os.path.join(params.DATA_PATH, params.CURRENT_DATA_FOLDER)
+        if os.path.islink(current_link) or os.path.exists(current_link):
+            os.remove(current_link)
+            logging.info(f"Previous 'current' symlink removed")
+        os.symlink(self.data_folder, current_link)
+        logging.info(f"'current' symlink updated to point to: {self.data_folder}")
 
         # load configuration from the specified YAML file
         try:

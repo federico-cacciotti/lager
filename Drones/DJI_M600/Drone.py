@@ -553,17 +553,31 @@ class Drone:
         top_line = "[white]" + u"\u250c" + (u"\u2500" * (width-2)) + u"\u2510[/white]"
         lines.append(top_line)
         # Unicode block elements for sub-row smoothing
-        block_chars = [
-            (0.0, " "),
-            (0.125, "▁"),
-            (0.25, "▂"),
-            (0.375, "▃"),
-            (0.5, "▄"),
-            (0.625, "▅"),
-            (0.75, "▆"),
-            (0.875, "▇"),
-            (1.0, "█"),
-        ]
+        USE_UNICODE_BLOCKS = os.environ.get('TERM') != 'linux'
+        if USE_UNICODE_BLOCKS:
+            block_chars = [
+                (0.0, " "),
+                (0.125, "▁"),
+                (0.25, "▂"),
+                (0.375, "▃"),
+                (0.5, "▄"),
+                (0.625, "▅"),
+                (0.75, "▆"),
+                (0.875, "▇"),
+                (1.0, "█"),
+            ]
+        else:
+            block_chars = [
+                (0.0, " "),
+                (0.125, "."),
+                (0.25, ":"),
+                (0.375, "-"),
+                (0.5, "="),
+                (0.625, "+"),
+                (0.75, "*"),
+                (0.875, "#"),
+                (1.0, "@"),
+            ]
         for row in range(1, height-1):
             line = ""
             for col in range(width):
@@ -599,7 +613,8 @@ class Drone:
                     elif row < horizon:
                         line += " "
                     else:
-                        line += "[green]█[/green]"
+                        block = block_chars[-1][1]  # default to full block
+                        line += f"[green]{block}[/green]"
             lines.append(line)
         # Bottom border
         bottom_line = "[white]" + u"\u2514" + (u"\u2500" * (width-2)) + u"\u2518[/white]"

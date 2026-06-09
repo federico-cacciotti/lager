@@ -1,10 +1,16 @@
-import sys
-
-sys.path.append('..')
 from DataLoader import DataLoader
+import argparse
+import parameters as params
+import os
+
+parser = argparse.ArgumentParser(description='Decode telemetry data')
+parser.add_argument('--data-folder', 
+                    default=os.path.join(params.DATA_PATH, params.CURRENT_DATA_FOLDER), 
+                    help='Folder containing the data')
 
 def main():
-    data_folder = 'data/gimbal_motion/'
+    args = parser.parse_args()
+    data_folder = args.data_folder
     loader = DataLoader(data_folder)
     data = loader.get_data()
 

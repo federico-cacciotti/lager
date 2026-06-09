@@ -1,11 +1,13 @@
-import sys
-import time
-sys.path.append('..')
-
 from Controller import Controller
+import time
+import argparse
+
+parser = argparse.ArgumentParser(description='Follow a point of interest (POI) with the drone and gimbal')
+parser.add_argument('--config', default='config/follow_POI_config.yaml', help='Path to the configuration file')
+config_file = parser.parse_args().config
 
 def main():
-    config_file = '../config/follow_POI_config.yaml'
+    
     controller = Controller(config_file)
     
     # connect to the drone and gimbal (if configured)

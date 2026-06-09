@@ -4,8 +4,7 @@ import pickle
 
 from Drones import DJI_M600
 from Gimbals import Gremsy_T7
-
-decoded_data_filename = 'decoded_telemetry_data.pkl'
+import parameters as params
 
 class DataLoader:
 
@@ -56,7 +55,7 @@ class DataLoader:
 
     def get_data(self, force_decode=False):
         # check if the decoded data file already exists, if so load it and return it
-        path_to_decoded_file = os.path.join(self.data_folder, decoded_data_filename)
+        path_to_decoded_file = os.path.join(self.data_folder, params.DECODED_DATA_FILENAME)
         if os.path.exists(path_to_decoded_file) and not force_decode:
             try:
                 with open(path_to_decoded_file, 'rb') as f:
@@ -84,14 +83,14 @@ class DataLoader:
         Save telemetry data to a binary file in the data folder.
         """
         # check if the decoded data file already exists, if so print a warning that it will be overwritten
-        path_to_decoded_file = os.path.join(self.data_folder, decoded_data_filename)
+        path_to_decoded_file = os.path.join(self.data_folder, params.DECODED_DATA_FILENAME)
         if os.path.exists(path_to_decoded_file):
             print(f"Warning: Decoded data file already exists at {path_to_decoded_file}.")
             print(f"To overwrite it, set force_overwrite=True when calling save_data()")
             if not force_overwrite:
                 return
 
-        path_to_file = os.path.join(self.data_folder, decoded_data_filename)
+        path_to_file = os.path.join(self.data_folder, params.DECODED_DATA_FILENAME)
 
         try:
             with open(path_to_file, 'wb') as f:
