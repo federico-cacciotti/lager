@@ -12,6 +12,7 @@ class POI():
         self.longitude = longitude
         self.altitude = altitude
         self.max_distance = max_distance
+        self.current_distance = None
         self.is_tracking = False
         self.tracking_thread = None
 
@@ -35,9 +36,9 @@ class POI():
             uav_roll = uav_attitude.get('roll')
             uav_yaw = uav_attitude.get('yaw')
 
-            distance = self.distance(uav_lat, uav_lon, uav_alt)
-            if distance > self.max_distance:
-                logger.debug(f"POI {self.name} is out of range (distance: {distance:.2f} m). Not tracking.")
+            self.current_distance = self.distance(uav_lat, uav_lon, uav_alt)
+            if self.current_distance > self.max_distance:
+                logger.debug(f"POI {self.name} is out of range (distance: {self.current_distance:.2f} m). Not tracking.")
                 time.sleep(1)  # check again in 1 second
                 continue
             else:
@@ -77,3 +78,14 @@ class POI():
         uav_ecef = pm.geodetic2ecef(uav_lat, uav_lon, uav_alt)
         distance = ((poi_ecef[0] - uav_ecef[0]) ** 2 + (poi_ecef[1] - uav_ecef[1]) ** 2 + (poi_ecef[2] - uav_ecef[2]) ** 2) ** 0.5
         return distance
+    
+    def get_data(self):
+        return {
+            'name': self.name,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'altitude': self.altitude,
+            'max_distance': self.max_distance,
+            'current_distance': self.current_distance,
+            'is_tracking': self.is_tracking
+        }
