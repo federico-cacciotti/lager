@@ -151,7 +151,7 @@ class Gimbal:
         except Exception as e:
             logger.error(f"Failed to connect to gimbal on {self.port} at {self.baudrate} baudrate: {e}")
             sys.exit(1)
-        logger.info(f"Connected to gimbal on {self.port} at {self.baudrate} baudrate")
+        logger.info(f"Trying to connect to gimbal on {self.port} at {self.baudrate} baudrate")
 
         logger.info("Starting heartbeat thread: heartbeat will be sent every {} seconds".format(1.0/self.heartbeat_frequency))
         self.heartbeat_thread = threading.Thread(target=self.send_heartbeat, daemon=True)

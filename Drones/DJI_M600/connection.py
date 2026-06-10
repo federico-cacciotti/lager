@@ -13,7 +13,7 @@ class DroneConnection:
     def connect(self):
         try:
             self.serial = serial.Serial(self.port, self.baudrate, timeout=self.timeout)
-            logger.info(f"Successfully connected to drone on {self.port} at {self.baudrate} baud.")
+            logger.info(f"Trying to connect to drone on {self.port} at {self.baudrate} baud")
         except Exception as e:
             logger.error(f"Failed to connect to drone: {e}")
             self.serial = None
