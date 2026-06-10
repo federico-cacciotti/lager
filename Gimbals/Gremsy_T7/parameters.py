@@ -3,7 +3,7 @@
 #  These parameters control the behavior of utility functions such as
 #  the message polling loop and the interpolation function.
 # ------------------------------------------------------------------
-DEFAULT_SERIAL_PORT          = '/dev/serial0' # serial port
+DEFAULT_SERIAL_PORT          = '/dev/serial1' # serial port
 DEFAULT_BAUDRATE             = 115200         # serial baudrate
 HEARTBEAT_FREQUENCY          = 1              # heartbeat frequency [Hz]
 TIMEOUT                      = 5              # message polling timeout [seconds]

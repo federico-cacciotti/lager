@@ -13,6 +13,7 @@ Live Attitude and Gimbal Error Resolver: a Python-based controller for UAV paylo
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
+- [Autostart](#autostart)
 - [Modules](#modules)
 - [Tests](#tests)
 - [TODO](#todo)
@@ -35,11 +36,13 @@ The controller runs on a companion computer onboard the UAV (tested on Raspberry
 
 ```
 lager/
+├── autostart.sh            # Entry-point called by telemetry.service at boot
 ├── cli.py                  # Rich-based live terminal display
 ├── Controller.py           # Main orchestration class
 ├── DataLoader.py           # Generic data loading utilities
 ├── decode_telemetry.py     # Offline telemetry decoding and plotting
 ├── follow_POI.py           # End-to-end POI tracking entry point
+├── GPIO.py                 # GPIO pin control for status LED
 ├── parameters.py           # Global parameters and paths
 ├── POI.py                  # POI class and gimbal tracking logic
 ├── requirements.txt        # Python dependencies
@@ -70,9 +73,22 @@ lager/
 | Component | Model | Interface |
 |-----------|-------|-----------|
 | Drone | DJI M600 | Serial (DJI OSDK), `/dev/serial0` |
-| Gimbal | Gremsy T7 | Serial (MAVLink), `/dev/ttyAMA4` |
+| Gimbal | Gremsy T7 | Serial (MAVLink), `/dev/serial1` |
 | Companion computer | Raspberry Pi (or equivalent) | — |
 | Status LED | — | GPIO pin 17 (BCM) |
+
+### Wiring
+
+Both serial connections use 3.3 V logic (TX / RX / GND — no hardware flow control).
+
+| Device | RPi UART | `/dev` node | RPi pin (BCM) | Signal |
+|--------|----------|-------------|---------------|--------|
+| DJI M600 | UART0 (default) | `/dev/serial0` | 14 | TXD → drone RX |
+| DJI M600 | UART0 (default) | `/dev/serial0` | 15 | RXD ← drone TX |
+| Gremsy T7 | UART4 | `/dev/serial1` | 8 | TXD4 → gimbal RX |
+| Gremsy T7 | UART4 | `/dev/serial1` | 9 | RXD4 ← gimbal TX |
+
+Enable UART4 by adding `dtoverlay=uart4` to `/boot/firmware/config.txt` and rebooting. The default UART0 must have the Linux console detached (set `enable_uart=1` and remove `console=serial0` from `/boot/firmware/cmdline.txt`).
 
 ---
 
@@ -95,6 +111,7 @@ Key dependencies:
 | `pandas` / `numpy` | Telemetry data handling |
 | `matplotlib` | Telemetry plotting |
 | `pyyaml` | Configuration file parsing |
+| `RPi.GPIO` | GPIO pins handling |
 
 ---
 
@@ -137,7 +154,7 @@ Gimbal:
   connection:
     type: serial
     protocol: mavlink
-    port: /dev/ttyAMA4
+    port: /dev/serial1
     baudrate: 115200
     timeout: 3
   telemetry:
@@ -189,6 +206,41 @@ python3 plot_telemetry.py
 Press **Ctrl+C** to stop any running script gracefully; telemetry logging will be stopped and devices disconnected cleanly.
 
 Each run creates a timestamped folder under `data/` containing the log file and a copy of the configuration used. A `data/current` symlink is automatically updated to point to the latest run folder.
+
+---
+
+## Autostart
+
+`autostart.sh` is the entry-point executed automatically at boot by the `telemetry.service` systemd unit. It activates the project's virtual environment and launches `follow_POI.py` with the flight configuration. If it crashes, it restarts automatically after 5 seconds.
+
+```bash
+#!/bin/bash
+set -e
+
+source /home/polocalc/lager_venv/bin/activate
+cd /home/polocalc/lager
+
+while true; do
+    exec python3 follow_POI.py --config config/follow_POI_config.yaml
+    EXIT_CODE=$?
+    sleep 5
+done
+```
+
+To install, enable, and manage the service:
+
+```bash
+# Enable the service to start at every boot
+sudo systemctl enable telemetry.service
+
+# Start / stop manually
+sudo systemctl start telemetry.service
+sudo systemctl stop telemetry.service
+
+# Check status and live logs
+sudo systemctl status telemetry.service
+journalctl -u telemetry.service -f
+```
 
 ---
 

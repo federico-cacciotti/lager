@@ -22,7 +22,7 @@ Gimbal:
   connection:
     type: serial
     protocol: mavlink
-    port: /dev/ttyAMA4
+    port: /dev/serial1
     baudrate: 115200
     timeout: 3
   telemetry:
