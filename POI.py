@@ -38,7 +38,7 @@ class POI():
 
             self.current_distance = self.distance(uav_lat, uav_lon, uav_alt)
             if self.current_distance > self.max_distance:
-                logger.info(f"POI {self.name} is out of range (distance: {self.current_distance:.2f} m). Not tracking.")
+                logger.warning(f"POI {self.name} is out of range (distance: {self.current_distance:.2f} m). Not tracking.")
                 self.is_tracking = False
                 time.sleep(5)  # check again in 5 seconds
                 continue

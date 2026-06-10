@@ -1,5 +1,3 @@
-from yaml import loader
-
 from DataLoader import DataLoader
 import argparse
 import parameters as params

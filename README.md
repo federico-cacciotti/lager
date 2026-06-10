@@ -41,6 +41,7 @@ lager/
 ├── Controller.py           # Main orchestration class
 ├── DataLoader.py           # Generic data loading utilities
 ├── decode_telemetry.py     # Offline telemetry decoding and plotting
+├── plot_telemetry.py       # Telemetry plotting utilities
 ├── follow_POI.py           # End-to-end POI tracking entry point
 ├── GPIO.py                 # GPIO pin control for status LED
 ├── parameters.py           # Global parameters and paths
@@ -61,7 +62,6 @@ lager/
     ├── data/
     │   └── gimbal_motion/   # Logged data from gimbal movement tests
     ├── move_gimbal.py       # Gimbal movement test
-    ├── plot_telemetry.py    # Telemetry plotting utilities
     ├── show_telemetry.py    # Live telemetry display test
     └── show_telemetry_sim.py# Simulated telemetry display test
 ```
@@ -112,6 +112,7 @@ Key dependencies:
 | `matplotlib` | Telemetry plotting |
 | `pyyaml` | Configuration file parsing |
 | `RPi.GPIO` | GPIO pins handling |
+| `mpl_ascii` | ASCII telemetry plotting |
 
 ---
 
@@ -183,6 +184,9 @@ python3 follow_POI.py
 
 # Decode and inspect previously logged telemetry files
 python3 decode_telemetry.py
+
+# Plot previously decoded telemetry files
+python3 plot_telemetry.py
 ```
 
 Run test scripts from the `tests/` directory:
@@ -198,9 +202,6 @@ python3 show_telemetry_sim.py
 
 # Move gimbal to specific angles
 python3 move_gimbal.py
-
-# Plot logged telemetry data
-python3 plot_telemetry.py
 ```
 
 Press **Ctrl+C** to stop any running script gracefully; telemetry logging will be stopped and devices disconnected cleanly.
@@ -307,7 +308,6 @@ The `LED` class wraps `RPi.GPIO` and handles the blink loop in a daemon thread. 
 | `show_telemetry.py` | `tests/` | Live display with real hardware |
 | `show_telemetry_sim.py` | `tests/` | Live display with simulated data |
 | `move_gimbal.py` | `tests/` | Command the gimbal to a sequence of angles |
-| `plot_telemetry.py` | `tests/` | Plot logged telemetry data with matplotlib |
 
 ---
 
@@ -321,5 +321,4 @@ The `LED` class wraps `RPi.GPIO` and handles the blink loop in a daemon thread. 
     - separate graphic function from main file
 
 - Gremsy T7
-    - add graphic features
     - separate graphic function from main file
